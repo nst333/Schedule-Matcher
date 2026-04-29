@@ -1,0 +1,124 @@
+@import url('https://fonts.googleapis.com/css2?family=Do+Hyeon&display=swap');
+
+body {
+    background: #DDE7E7;
+    padding: 40px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-family: 'sans-serif';
+}
+
+/* 상단 버튼[cite: 2] */
+.container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 40px;
+}
+
+.name-btn {
+    width: 160px;
+    height: 80px;
+    margin: 10px;
+    font-family: 'Do Hyeon';
+    font-size: 1.5rem;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    background: white;
+    transition: 0.3s;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.name-btn:active {
+    transform: scale(0.9);
+}
+
+/* 섹션 공통 */
+.summary-section,
+.exclude-section {
+    width: 100%;
+    max-width: 1000px;
+    margin-bottom: 30px;
+}
+
+.section-title {
+    font-family: 'Do Hyeon';
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* Dropdown[cite: 1] */
+.date-details {
+    background: white;
+    margin-bottom: 8px;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+summary {
+    padding: 15px;
+    font-family: 'Do Hyeon';
+    cursor: pointer;
+    list-style: none;
+    font-size: 1.2rem;
+}
+
+.date-content {
+    padding: 15px;
+    border-top: 1px solid #eee;
+    color: #666;
+    word-break: break-all;
+}
+
+/* 체크박스 그룹[cite: 1] */
+.checkbox-group {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px;
+}
+
+.check-item {
+    background: white;
+    padding: 10px 20px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-family: 'Do Hyeon';
+    transition: 0.3s;
+    border: 2px solid transparent;
+}
+
+.check-item:has(input:checked) {
+    background: #ff7675;
+    color: white;
+    border-color: #d63031;
+}
+
+/* 달력 레이아웃[cite: 2] */
+.calendar-container {
+    width: 100%;
+    max-width: 1400px;
+    display: flex;
+    flex-direction: column;
+    gap: 60px;
+}
+
+.calendar-box {
+    background: white;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.calendar-title {
+    font-family: 'Do Hyeon';
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+/* FullCalendar 내부 수정 */
+.fc-toolbar-title {
+    font-family: 'Do Hyeon' !important;
+}

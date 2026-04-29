@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <!-- FullCalendar CDN[cite: 1] -->
+    <link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.css' rel='stylesheet' />
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.js'></script>
+    <title>스케줄 통합 관리</title>
+</head>
+<body>
+    <!-- 버튼 영역 수정 -->
+    <div class="container">
+        {% for name in all_names %}
+        <!-- event_id를 경로에 포함 -->
+        <button class="name-btn" onclick="location.href='/event/{{ event.id }}/calendar/{{ name }}'">{{ name }}</button>
+        {% endfor %}
+    </div>
+
+    <!-- 상단 타이틀 추가 -->
+    <h1 style="font-family: 'Do Hyeon'; margin-bottom: 20px;">🚩 {{ event.title }} 일정 현황</h1>
+    <button onclick="location.href='/'" style="padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">뒤로 가기</button>
+
+    <!-- Dropdown 요약[cite: 1] -->
+    <div class="summary-section">
+        <h2 class="section-title">📝 개인별 일정 요약</h2>
+        {% for item in text_list %}
+        <details class="date-details">
+            <summary style="color: {{ item.color }}; border-left: 8px solid {{ item.color }};">
+                {{ item.name }}의 일정 (클릭)
+            </summary>
+            <div class="date-content">{{ item.dates if item.dates else "데이터 없음" }}</div>
+        </details>
+        {% endfor %}
+    </div>
+
+    <!-- 제외 인원 선택 (실시간 필터)[cite: 1] -->
+    <div class="exclude-section">
+        <h2 class="section-title" style="color: #6c5ce7;">🔍 미참여 인원 선택</h2>
+        <div class="checkbox-group">
+            {% for name in all_names %}
+            <label class="check-item">
+                <input type="checkbox" class="exclude-check" value="{{ name }}" onchange="updateCommonCalendar()">
+                {{ name }}
+            </label>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- 달력 영역[cite: 1] -->
+    <div class="calendar-container">
+        <div class="calendar-box">
+            <h2 class="calendar-title">📅 전체 합산 현황</h2>
+            <div id='calendar-all'></div>
+        </div>
+
+        <div class="calendar-box">
+            <h2 class="calendar-title" style="color: #6c5ce7;">🌟 선택 인원 공통 가능일</h2>
+            <div id='calendar-common'></div>
+        </div>
+    </div>
+
+    <script>
+        const allData = {{ all_data|tojson }};
+        const allNames = {{ all_names|tojson }};
+        let calendarCommon;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // 전체 달력 초기화[cite: 1]
+            new FullCalendar.Calendar(document.getElementById('calendar-all'), {
+                initialView: 'dayGridMonth',
+                locale: 'ko',
+                height: 800,
+                events: {{ events|tojson }}
+            }).render();
+
+            // 공통 달력 초기화[cite: 1]
+            calendarCommon = new FullCalendar.Calendar(document.getElementById('calendar-common'), {
+                initialView: 'dayGridMonth',
+                locale: 'ko',
+                height: 800,
+                events: [] 
+            });
+            calendarCommon.render();
+            
+            updateCommonCalendar(); // 페이지 로드 시 최초 계산
+        });
+
+        function updateCommonCalendar() {
+            // 체크된 인원 제외 로직[cite: 1]
+            const excluded = Array.from(document.querySelectorAll('.exclude-check:checked')).map(cb => cb.value);
+            const targetNames = allNames.filter(name => !excluded.includes(name));
+            
+            let commonDates = [];
+            const validSets = targetNames.map(name => allData[name] || []);
+            
+            if (validSets.length > 0) {
+                // 교집합 연산[cite: 1]
+                commonDates = validSets.reduce((a, b) => a.filter(c => b.includes(c)));
+            }
+
+            const newEvents = commonDates.map(d => ({
+                title: '🌟 가능!',
+                start: d,
+                backgroundColor: '#6c5ce7',
+                borderColor: 'transparent'
+            }));
+
+            calendarCommon.removeAllEvents();
+            calendarCommon.addEventSource(newEvents);
+        }
+    </script>
+</body>
+</html>

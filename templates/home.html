@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <title>이벤트 선택</title>
+</head>
+<body style="font-family: 'Do Hyeon';">
+    <div style="max-width: 600px; width: 100%; text-align: center; background: white; padding: 40px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
+        <h1 style="font-size: 3rem; color: #2d3436; margin-bottom: 30px;">📅 어떤 약속인가요?</h1>
+        
+        <!-- 이벤트 생성 폼 -->
+        <form action="/create_event" method="POST" style="margin-bottom: 40px;">
+            <input type="text" name="title" placeholder="예: 여름 엠티, 회식" required 
+                   style="padding: 15px; width: 70%; border: 2px solid #ddd; border-radius: 10px; font-size: 1.2rem;">
+            <button type="submit" style="padding: 15px 25px; background: #6c5ce7; color: white; border: none; border-radius: 10px; cursor: pointer; font-size: 1.2rem;">생성</button>
+        </form>
+
+        <hr style="border: 0; border-top: 1px solid #eee; margin-bottom: 30px;">
+
+        <!-- 이벤트 목록 -->
+        <h2 style="margin-bottom: 20px;">기존 이벤트 목록</h2>
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+            {% for event in events %}
+            <a href="/event/{{ event.id }}" style="text-decoration: none; padding: 20px; background: #f1f2f6; border-radius: 10px; color: #2d3436; font-size: 1.5rem; transition: 0.3s;">
+                {{ event.title }}
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ name }}의 일정 선택</title>
+    <link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.css' rel='stylesheet' />
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.js'></script>
+    <style>
+        body { font-family: "Do Hyeon", sans-serif; background: #DDE7E7; text-align: center; }
+        #calendar { max-width: 800px; margin: 40px auto; background: white; padding: 20px; border-radius: 12px; }
+        .save-btn { padding: 15px 40px; font-size: 1.5rem; background: #4CAF50; color: white; border: none; border-radius: 8px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>{{ name }}님, 날짜를 선택해주세요</h1>
+    <div id='calendar'></div>
+    <button class="save-btn" onclick="saveData()">저장하기</button>
+
+    <script>
+        let selectedDates = [];
+        const userName = "{{ name }}";
+
+        document.addEventListener('DOMContentLoaded', function() {
+            var calendarEl = document.getElementById('calendar');
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                selectable: true,
+                dateClick: function(info) {
+                    if (selectedDates.includes(info.dateStr)) {
+                        selectedDates = selectedDates.filter(d => d !== info.dateStr);
+                        info.dayEl.style.backgroundColor = ''; // 선택 해제
+                    } else {
+                        selectedDates.push(info.dateStr);
+                        info.dayEl.style.backgroundColor = '#7ed6df'; // 선택 표시
+                    }
+                }
+            });
+            calendar.render();
+        });
+
+        function saveData() {
+            fetch('/save_schedule', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                    event_id: "{{ event_id }}", // 서버에서 받은 event_id 포함[cite: 1]
+                    name: "{{ name }}", 
+                    dates: selectedDates 
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if(data.status === 'success') {
+                    alert('저장되었습니다!');
+                    location.href = '/event/{{ event_id }}'; // 해당 이벤트 페이지로 복귀
+                }
+            });
+        }
+    </script>
+</body>
+</html>
